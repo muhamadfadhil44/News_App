@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:news_app/models/article.dart';
+import 'package:news_app/providers/bookmark_provider.dart';
 import 'package:news_app/providers/news_provider.dart';
 import 'package:news_app/screens/home_screen.dart';
 import 'package:news_app/services/news_service.dart';
@@ -18,9 +19,16 @@ class MockTestService implements NewsService {
       onFetch();
 }
 
-Widget createHomeScreenWithService(NewsService service) {
-  return ChangeNotifierProvider(
-    create: (_) => NewsProvider(newsService: service)..loadArticles(),
+Widget createHomeScreenWithService(NewsService service, {BookmarkProvider? bookmarkProvider}) {
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (_) => NewsProvider(newsService: service)..loadArticles(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => bookmarkProvider ?? BookmarkProvider(),
+      ),
+    ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
       home: const HomeScreen(),

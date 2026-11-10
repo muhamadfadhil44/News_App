@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:news_app/models/article.dart';
+import 'package:news_app/providers/bookmark_provider.dart';
 import 'package:news_app/theme/app_theme.dart';
 
 /// Layar Detail Berita untuk menampilkan rincian informasi artikel.
@@ -57,6 +59,33 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Berita'),
+        actions: [
+          Consumer<BookmarkProvider>(
+            builder: (context, bookmarkProvider, child) {
+              final isFav = bookmarkProvider.isBookmarked(article);
+              return IconButton(
+                icon: Icon(
+                  isFav ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                  color: isFav ? AppTheme.primary : AppTheme.textPrimary,
+                ),
+                tooltip: isFav ? 'Hapus dari favorit' : 'Simpan ke favorit',
+                onPressed: () {
+                  final added = bookmarkProvider.toggleBookmark(article);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        added
+                            ? 'Artikel ditambahkan ke favorit.'
+                            : 'Artikel dihapus dari favorit.',
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

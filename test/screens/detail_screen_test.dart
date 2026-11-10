@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:news_app/models/article.dart';
+import 'package:news_app/providers/bookmark_provider.dart';
 import 'package:news_app/screens/detail_screen.dart';
 import 'package:news_app/theme/app_theme.dart';
 
 void main() {
-  Widget createDetailScreen(Article article) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: DetailScreen(article: article),
+  Widget createDetailScreen(Article article, {BookmarkProvider? bookmarkProvider}) {
+    return ChangeNotifierProvider<BookmarkProvider>(
+      create: (_) => bookmarkProvider ?? BookmarkProvider(),
+      child: MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: DetailScreen(article: article),
+      ),
     );
   }
 
