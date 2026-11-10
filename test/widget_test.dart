@@ -1,12 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:news_app/main.dart';
+import 'package:news_app/services/mock_news_service.dart';
 
 void main() {
-  testWidgets('NewsApp smoke test', (WidgetTester tester) async {
-    // Membangun aplikasi dan memicu frame.
-    await tester.pumpWidget(const NewsApp());
+  testWidgets('NewsApp smoke test memuat Beranda', (WidgetTester tester) async {
+    // Membangun aplikasi dengan service delay nol agar pengujian berjalan cepat
+    await tester.pumpWidget(NewsApp(
+      newsService: MockNewsService(delay: Duration.zero),
+    ));
 
-    // Memverifikasi teks judul News App muncul di layar.
-    expect(find.text('News App'), findsOneWidget);
+    // Memverifikasi judul aplikasi di AppBar Beranda muncul
+    expect(find.text('Berita Terkini'), findsOneWidget);
+
+    // Menunggu hingga semua frame dan proses asinkron selesai
+    await tester.pumpAndSettle();
   });
 }
