@@ -181,6 +181,48 @@ class AppTheme {
           ),
         ),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: surface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: spacingM,
+          vertical: spacingS,
+        ),
+        hintStyle: bodyStyle,
+        prefixIconColor: textSecondary,
+        suffixIconColor: textSecondary,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusS),
+          borderSide: const BorderSide(color: border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusS),
+          borderSide: const BorderSide(color: border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusS),
+          borderSide: const BorderSide(color: primary, width: 1.5),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: surface,
+        selectedColor: primary,
+        secondarySelectedColor: primary,
+        padding: const EdgeInsets.symmetric(
+          horizontal: spacingS,
+          vertical: spacingXs,
+        ),
+        labelStyle: bodyStyle,
+        secondaryLabelStyle: const TextStyle(
+          fontSize: fontSizeBody,
+          fontWeight: FontWeight.w600,
+          color: onPrimary,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusS),
+          side: const BorderSide(color: border),
+        ),
+      ),
     );
   }
 }

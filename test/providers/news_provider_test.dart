@@ -66,5 +66,18 @@ void main() {
       expect(provider.isError, isTrue);
       expect(provider.errorMessage, 'Koneksi internet bermasalah');
     });
+
+    test('setCategory dan setSearchQuery memperbarui nilai state dan memanggil service', () async {
+      final provider = NewsProvider(newsService: FakeSuccessNewsService());
+
+      provider.setCategory('Bisnis');
+      expect(provider.selectedCategory, 'Bisnis');
+
+      provider.setSearchQuery('Investasi');
+      expect(provider.searchQuery, 'Investasi');
+
+      provider.clearSearch();
+      expect(provider.searchQuery, isEmpty);
+    });
   });
 }

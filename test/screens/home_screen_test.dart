@@ -140,5 +140,37 @@ void main() {
       expect(find.byType(EmptyView), findsOneWidget);
       expect(find.text('Belum Ada Berita'), findsOneWidget);
     });
+
+    testWidgets('Kolom pencarian dan filter chip kategori dapat berinteraksi',
+        (tester) async {
+      final service = MockTestService(() async {
+        return [
+          const Article(
+            title: 'Berita Hasil Cari',
+            sourceName: 'Kompas',
+          ),
+        ];
+      });
+
+      await tester.pumpWidget(createHomeScreenWithService(service));
+      await tester.pumpAndSettle();
+
+      // Memastikan kolom cari dan chip kategori tampil
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text('Semua'), findsOneWidget);
+      expect(find.text('Teknologi'), findsOneWidget);
+      expect(find.text('Bisnis'), findsOneWidget);
+
+      // Ketuk chip kategori Teknologi
+      await tester.tap(find.text('Teknologi'));
+      await tester.pumpAndSettle();
+
+      // Ketik teks pencarian di TextField
+      await tester.enterText(find.byType(TextField), 'robotika');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await tester.pumpAndSettle();
+
+      expect(find.text('robotika'), findsOneWidget);
+    });
   });
 }

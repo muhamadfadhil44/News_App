@@ -30,6 +30,8 @@ class NewsProvider extends ChangeNotifier {
   NewsStatus _status = NewsStatus.loading;
   List<Article> _articles = [];
   String _errorMessage = '';
+  String _selectedCategory = 'Semua';
+  String _searchQuery = '';
 
   NewsProvider({required this.newsService});
 
@@ -37,15 +39,48 @@ class NewsProvider extends ChangeNotifier {
   NewsStatus get status => _status;
   List<Article> get articles => _articles;
   String get errorMessage => _errorMessage;
+  String get selectedCategory => _selectedCategory;
+  String get searchQuery => _searchQuery;
 
   bool get isLoading => _status == NewsStatus.loading;
   bool get isSuccess => _status == NewsStatus.success;
   bool get isError => _status == NewsStatus.error;
   bool get isEmpty => _status == NewsStatus.empty;
 
+  /// Mengubah kategori aktif dan memuat ulang data sesuai kategori terpilih.
+  void setCategory(String category) {
+    if (_selectedCategory == category) return;
+    _selectedCategory = category;
+    loadArticles(
+      category: _selectedCategory,
+      query: _searchQuery,
+    );
+  }
+
+  /// Melakukan pencarian berdasarkan kata kunci query.
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    loadArticles(
+      category: _selectedCategory,
+      query: _searchQuery,
+    );
+  }
+
+  /// Menghapus kata kunci pencarian dan kembali ke daftar kategori aktif.
+  void clearSearch() {
+    _searchQuery = '';
+    loadArticles(
+      category: _selectedCategory,
+      query: '',
+    );
+  }
+
   /// Memuat daftar artikel secara asinkron menggunakan async/await.
   /// Memperbarui state dan memicu pembaruan UI melalui [notifyListeners].
   Future<void> loadArticles({String? category, String? query}) async {
+    final activeCategory = category ?? _selectedCategory;
+    final activeQuery = query ?? _searchQuery;
+
     // 1. Set status ke loading dan bersihkan pesan error lama
     _status = NewsStatus.loading;
     _errorMessage = '';
@@ -54,8 +89,8 @@ class NewsProvider extends ChangeNotifier {
     try {
       // 2. Memanggil service secara asinkron (mengembalikan Future)
       final results = await newsService.fetchArticles(
-        category: category,
-        query: query,
+        category: activeCategory,
+        query: activeQuery,
       );
 
       // 3. Menentukan status sukses atau kosong berdasarkan isi data
@@ -78,6 +113,9 @@ class NewsProvider extends ChangeNotifier {
 
   /// Memuat ulang data berita (biasanya dipanggil saat aksi pull-to-refresh).
   Future<void> refreshArticles() async {
-    await loadArticles();
+    await loadArticles(
+      category: _selectedCategory,
+      query: _searchQuery,
+    );
   }
 }

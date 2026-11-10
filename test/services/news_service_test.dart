@@ -60,5 +60,19 @@ void main() {
       expect(result.length, 1);
       expect(result.first.title.toLowerCase(), contains('satelit'));
     });
+
+    test('Kategori: Menyaring artikel berdasarkan kategori pilihan', () async {
+      final service = MockNewsService(
+        simulatedState: MockState.success,
+        delay: Duration.zero,
+      );
+
+      final sportsArticles = await service.fetchArticles(category: 'Olahraga');
+      expect(sportsArticles, isNotEmpty);
+      expect(sportsArticles.first.title.toLowerCase(), contains('bulu tangkis'));
+
+      final techArticles = await service.fetchArticles(category: 'Teknologi');
+      expect(techArticles.length, greaterThanOrEqualTo(1));
+    });
   });
 }

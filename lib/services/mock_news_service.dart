@@ -83,10 +83,32 @@ class MockNewsService implements NewsService {
       if (category != null && category.trim().isNotEmpty && category.toLowerCase() != 'semua') {
         final lowerCategory = category.toLowerCase().trim();
         articles = articles.where((article) {
-          final titleMatch = article.title.toLowerCase().contains(lowerCategory);
-          final descMatch = article.description?.toLowerCase().contains(lowerCategory) ?? false;
-          final contentMatch = article.content?.toLowerCase().contains(lowerCategory) ?? false;
-          return titleMatch || descMatch || contentMatch;
+          final title = article.title.toLowerCase();
+          final desc = article.description?.toLowerCase() ?? '';
+          final content = article.content?.toLowerCase() ?? '';
+          final fullText = '$title $desc $content';
+
+          if (lowerCategory == 'bisnis') {
+            return fullText.contains('bisnis') ||
+                fullText.contains('ekonomi') ||
+                fullText.contains('anggaran') ||
+                fullText.contains('investor');
+          } else if (lowerCategory == 'olahraga') {
+            return fullText.contains('olahraga') ||
+                fullText.contains('bulu tangkis') ||
+                fullText.contains('turnamen') ||
+                fullText.contains('pertandingan');
+          } else if (lowerCategory == 'teknologi') {
+            return fullText.contains('teknologi') ||
+                fullText.contains('satelit') ||
+                fullText.contains('digital') ||
+                fullText.contains('komputasi');
+          } else if (lowerCategory == 'pendidikan') {
+            return fullText.contains('kurikulum') ||
+                fullText.contains('sekolah') ||
+                fullText.contains('pembelajaran');
+          }
+          return fullText.contains(lowerCategory);
         }).toList();
       }
 
