@@ -61,6 +61,7 @@ flutter:
   # Asset data contoh untuk front end
   assets:
     - assets/mock/
+    - assets/mock/articles.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

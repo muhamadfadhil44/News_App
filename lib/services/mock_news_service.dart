@@ -28,12 +28,8 @@ class MockNewsService implements NewsService {
   /// Asset bundle opsional untuk mempermudah unit testing.
   final AssetBundle? bundle;
 
-  // =========================================================================
-  // SAKELAR UTAMA: Di bawah ini di-set ke MockState.error untuk simulasi eror.
-  // Jika ingin normal kembali, cukup ganti menjadi MockState.success
-  // =========================================================================
   MockNewsService({
-    this.simulatedState = MockState.error, 
+    this.simulatedState = MockState.success,
     this.delay = const Duration(seconds: 1),
     this.bundle,
   });
@@ -58,7 +54,14 @@ class MockNewsService implements NewsService {
 
     // 3. Simulasi state Sukses: Membaca file JSON contoh dan mem-parsing ke objek Article
     try {
-      final String jsonString = await _resolvedBundle.loadString('assets/mock/articles.json');
+      String jsonString;
+      try {
+        jsonString = await _resolvedBundle.loadString('assets/mock/articles.json');
+      } catch (_) {
+        // Fallback jika aset belum selesai di-bundle oleh compiler/hot reload Flutter
+        jsonString = _fallbackJsonString;
+      }
+
       final Map<String, dynamic> decodedData = jsonDecode(jsonString) as Map<String, dynamic>;
 
       final rawArticles = decodedData['articles'] as List<dynamic>? ?? [];
@@ -95,4 +98,78 @@ class MockNewsService implements NewsService {
       throw Exception('Gagal membaca data artikel contoh: $e');
     }
   }
+
+  /// Data cadangan (fallback) berformat sama dengan assets/mock/articles.json.
+  /// Mencegah terjadinya error 'Unable to load asset' ketika pengembang/siswa
+  /// melakukan Hot Reload tanpa melakukan restart penuh aplikasi (Hot Restart/Rebuild).
+  static const String _fallbackJsonString = '''
+{
+  "status": "ok",
+  "totalResults": 5,
+  "articles": [
+    {
+      "source": {
+        "id": "antaranews",
+        "name": "Antara News"
+      },
+      "author": "Budi Santoso",
+      "title": "Peluncuran Satelit Komunikasi Terbaru Berjalan Sukses di Kourou",
+      "description": "Satelit komunikasi generasi terbaru berhasil diluncurkan ke orbit geostasioner untuk memperkuat akses internet pelosok.",
+      "url": "https://example.com/satelit-komunikasi-sukses",
+      "urlToImage": "https://picsum.photos/seed/satelit/600/400",
+      "publishedAt": "2026-10-13T08:30:00Z",
+      "content": "Peluncuran roket pembawa satelit komunikasi berjalan mulus tanpa kendala teknis. Satelit ini diharapkan mulai beroperasi penuh bulan depan."
+    },
+    {
+      "source": {
+        "id": "kompas",
+        "name": "Kompas"
+      },
+      "author": null,
+      "title": "Pemerintah Tingkatkan Anggaran Energi Terbarukan untuk Target Emisi Nol",
+      "description": "Pemerintah mengumumkan kenaikan alokasi pendanaan proyek tenaga surya dan bayu nasional.",
+      "url": "https://example.com/anggaran-energi-terbarukan",
+      "urlToImage": "https://picsum.photos/seed/energi/600/400",
+      "publishedAt": "2026-10-13T09:15:00Z",
+      "content": "Langkah strategis transisi energi dipercepat dengan melibatkan berbagai investor hijau internasional."
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Tempo"
+      },
+      "author": "Siti Rahma",
+      "title": "Inovasi Pembelajaran Digital Masuk Kurikulum Sekolah Menengah",
+      "description": null,
+      "url": "https://example.com/inovasi-pembelajaran-digital",
+      "urlToImage": "https://picsum.photos/seed/belajar/600/400",
+      "publishedAt": "2026-10-12T14:00:00Z",
+      "content": "Kurikulum berbasis komputasi modern mulai diuji coba pada ratusan sekolah percontohan di berbagai daerah."
+    },
+    {
+      "source": {
+        "id": "detik",
+        "name": "Detikcom"
+      },
+      "author": "Rian Pratama",
+      "title": "Tim Bulu Tangkis Indonesia Lolos ke Babak Final Turnamen Terbuka",
+      "description": "Ganda putra andalan berhasil menundukkan lawan unggulan pertama lewat pertarungan tiga gim yang menegangkan.",
+      "url": "https://example.com/tim-bulu-tangkis-final",
+      "urlToImage": null,
+      "publishedAt": "2026-10-12T16:45:00Z",
+      "content": "Pertandingan semifinal berlangsung ketat selama lebih dari 70 menit sebelum kemenangan berhasil dikunci."
+    },
+    {
+      "source": null,
+      "author": null,
+      "title": "Pertumbuhan Ekonomi Sektor Pariwisata Tunjukkan Tren Positif Akhir Tahun",
+      "description": "Jumlah kunjungan wisatawan domestik dan mancanegara melampaui target awal kuartal ini.",
+      "url": null,
+      "urlToImage": null,
+      "publishedAt": "2026-10-11T11:20:00Z",
+      "content": null
+    }
+  ]
+}
+''';
 }

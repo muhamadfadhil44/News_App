@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:news_app/providers/news_provider.dart';
+import 'package:news_app/screens/detail_screen.dart';
 import 'package:news_app/theme/app_theme.dart';
 import 'package:news_app/widgets/article_card.dart';
 import 'package:news_app/widgets/state_views.dart';
@@ -69,7 +70,12 @@ class HomeScreen extends StatelessWidget {
                 return ArticleCard(
                   article: article,
                   onTap: () {
-                    // Navigasi ke layar Detail akan diimplementasikan pada Langkah 5
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(article: article),
+                      ),
+                    );
                   },
                 );
               },

@@ -71,6 +71,29 @@ void main() {
       expect(find.text('Detik'), findsOneWidget);
     });
 
+    testWidgets('Mengetuk ArticleCard berpindah ke DetailScreen',
+        (tester) async {
+      final sampleArticles = [
+        const Article(
+          title: 'Judul Berita Navigasi',
+          sourceName: 'Antara',
+          description: 'Rincian deskripsi untuk diuji.',
+        ),
+      ];
+
+      final service = MockTestService(() async => sampleArticles);
+
+      await tester.pumpWidget(createHomeScreenWithService(service));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Judul Berita Navigasi'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Detail Berita'), findsOneWidget);
+      expect(find.text('Judul Berita Navigasi'), findsOneWidget);
+      expect(find.text('Baca Selengkapnya'), findsOneWidget);
+    });
+
     testWidgets('Menampilkan ErrorView dengan tombol Coba Lagi saat terjadi error',
         (tester) async {
       int fetchCount = 0;
