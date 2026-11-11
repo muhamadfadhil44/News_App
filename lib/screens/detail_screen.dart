@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:news_app/models/article.dart';
 import 'package:news_app/providers/bookmark_provider.dart';
 import 'package:news_app/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 /// Layar Detail Berita untuk menampilkan rincian informasi artikel.
 /// Sesuai PRD Fitur 3:
@@ -215,25 +217,30 @@ class DetailScreen extends StatelessWidget {
                     ],
                   ],
 
-                  // Tombol Baca Selengkapnya
-                  // Sesuai PRD: Membuka link browser sesungguhnya disiapkan pada tahap integrasi
+                                   // Tombol Baca Selengkapnya
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Aksi membuka tautan web akan dipasang pada tahap integrasi API.',
-                            ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        // CUKUP TULIS SEPERTI INI (Tanpa kata widget.)
+                        final article = this.article; 
+
+                        // === KODE 7 ASLI DARI MODUL ANDA ===
+                        // Panggil fungsi bukaArtikel di sini 
+                        if (article.url != null && article.url!.isNotEmpty) { 
+                          bukaArtikel(context, article.url!); 
+                        } else { 
+                          ScaffoldMessenger.of(context).showSnackBar( 
+                            const SnackBar(content: Text('Tautan artikel tidak tersedia.')), 
+                          ); 
+                        }
+                        // ===================================
                       },
                       icon: const Icon(Icons.open_in_browser_rounded),
                       label: const Text('Baca Selengkapnya'),
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -242,4 +249,16 @@ class DetailScreen extends StatelessWidget {
       ),
     );
   }
+  Future<void> bukaArtikel(BuildContext context, String url) async {
+  final berhasil = await launchUrl(
+    Uri.parse(url),
+    mode: LaunchMode.externalApplication,
+  );
+  
+  if (!berhasil && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Tidak bisa membuka tautan artikel.')),
+    );
+  }
+}
 }

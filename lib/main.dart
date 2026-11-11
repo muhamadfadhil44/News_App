@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:news_app/providers/bookmark_provider.dart';
 import 'package:news_app/providers/news_provider.dart';
 import 'package:news_app/screens/home_screen.dart';
-import 'package:news_app/services/mock_news_service.dart';
+import 'package:news_app/services/api_news_service.dart';
 import 'package:news_app/services/news_service.dart';
 import 'package:news_app/theme/app_theme.dart';
 
@@ -24,18 +24,21 @@ class NewsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        // 1. Provider untuk data berita dan status koneksi jaringan
+            providers: [
+        // Provider untuk data berita dan status koneksi jaringan
         ChangeNotifierProvider(
           create: (_) => NewsProvider(
-            newsService: newsService ?? MockNewsService(),
+            // HAPUS KODE LAMA: newsService ?? MockNewsService()
+            // GANTI DAN PAKSA JADI SEPERTI INI:
+            newsService: ApiNewsService(), 
           )..loadArticles(),
         ),
-        // 2. Provider untuk pengelolaan bookmark artikel favorit di memori
+        // Provider untuk pengelolaan bookmark
         ChangeNotifierProvider(
           create: (_) => BookmarkProvider(),
         ),
       ],
+
       child: MaterialApp(
         title: 'News App',
         theme: AppTheme.lightTheme,

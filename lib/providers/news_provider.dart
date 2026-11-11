@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/article.dart';
 import 'package:news_app/services/news_service.dart';
+import 'package:news_app/services/news_exception.dart';
 
 /// Empat status kondisi jaringan sesuai arsitektur PRD.
 /// Menggambarkan alur state: loading -> sukses / error / kosong.
@@ -19,11 +20,6 @@ enum NewsStatus {
 }
 
 /// Provider pengelola state berita dan status jaringan.
-///
-/// Catatan pembelajaran:
-/// - Menggunakan [ChangeNotifier] untuk memberitahu widget pendengar saat ada perubahan data.
-/// - Hanya bergantung pada kelas abstrak [NewsService], bukan implementasi langsung.
-/// - Memiliki 4 status utama: loading, sukses, error, dan kosong.
 class NewsProvider extends ChangeNotifier {
   final NewsService newsService;
 
@@ -81,32 +77,33 @@ class NewsProvider extends ChangeNotifier {
     final activeCategory = category ?? _selectedCategory;
     final activeQuery = query ?? _searchQuery;
 
-    // 1. Set status ke loading dan bersihkan pesan error lama
+    // 1. Set status ke loading dan bersihkan pesan error lama (Sesuai Kode 5)
     _status = NewsStatus.loading;
     _errorMessage = '';
     notifyListeners();
 
     try {
-      // 2. Memanggil service secara asinkron (mengembalikan Future)
-      final results = await newsService.fetchArticles(
+      // 2. Memanggil service secara asinkron
+      _articles = await newsService.fetchArticles(
         category: activeCategory,
         query: activeQuery,
       );
 
-      // 3. Menentukan status sukses atau kosong berdasarkan isi data
-      if (results.isEmpty) {
-        _status = NewsStatus.empty;
-        _articles = [];
-      } else {
-        _status = NewsStatus.success;
-        _articles = results;
-      }
-    } catch (e) {
-      // 4. Menangkap error dan mengubah status ke error
+      // 3. Menentukan status sukses atau kosong berdasarkan isi data (Sesuai Kode 5)
+      _status = _articles.isEmpty ? NewsStatus.empty : NewsStatus.success;
+
+    } on NewsException catch (e) {
+      // 4. Menangkap NewsException dengan membawa pesan khusus dari server (Sesuai Kode 5)
+      _errorMessage = e.message;
       _status = NewsStatus.error;
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+
+    } catch (_) {
+      // 5. Menangkap error lainnya (tidak ada internet/timeout) dengan pesan umum (Sesuai Kode 5)
+      _errorMessage = 'Gagal terhubung. Periksa koneksi internetmu.';
+      _status = NewsStatus.error;
+
     } finally {
-      // 5. Selalu panggil notifyListeners agar UI membangun ulang tampilannya sesuai status akhir
+      // 6. Selalu panggil notifyListeners agar UI membangun ulang tampilannya
       notifyListeners();
     }
   }

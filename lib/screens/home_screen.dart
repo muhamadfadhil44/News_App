@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (provider.isError) {
                   return ErrorView(
                     message: provider.errorMessage,
-                    onRetry: () => provider.refreshArticles(),
+                    onRetry: () => provider.loadArticles(),
                   );
                 }
 
