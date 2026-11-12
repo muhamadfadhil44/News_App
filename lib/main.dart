@@ -28,9 +28,7 @@ class NewsApp extends StatelessWidget {
         // Provider untuk data berita dan status koneksi jaringan
         ChangeNotifierProvider(
           create: (_) => NewsProvider(
-            // HAPUS KODE LAMA: newsService ?? MockNewsService()
-            // GANTI DAN PAKSA JADI SEPERTI INI:
-            newsService: ApiNewsService(), 
+            newsService: newsService ?? ApiNewsService(),
           )..loadArticles(),
         ),
         // Provider untuk pengelolaan bookmark

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:news_app/models/article.dart';
-import 'package:news_app/services/news_service.dart';
-import 'news_exception.dart'; // Jalur impor lokal yang benar untuk berkas di folder yang sama
+import '../models/article.dart';
+import 'news_exception.dart';
+import 'news_service.dart';
 
 class ApiNewsService implements NewsService {
   static const _apiKey = String.fromEnvironment('NEWS_API_KEY');
@@ -10,33 +10,27 @@ class ApiNewsService implements NewsService {
   @override
   Future<List<Article>> fetchArticles({String? query, String? category}) async {
     if (_apiKey.isEmpty) {
-      throw NewsException(
+      throw const NewsException(
         'API key belum diisi. Jalankan dengan --dart-define-from-file=env.json',
       );
     }
 
-    // Logika Penerjemah Kategori Bahasa Indonesia -> Inggris
+    // 1. Logika Penerjemah Kategori Bahasa Indonesia -> Inggris (Sesuai Chip di UI Anda)
     String? apiCategory;
     if (category != null) {
       if (category == 'Teknologi') {
         apiCategory = 'technology';
-      } else if (category == 'Bisnis') {
-        apiCategory = 'business';
-      } else if (category == 'Olahraga') {
-        apiCategory = 'sports';
-      } else if (category == 'Pendidikan') {
-        apiCategory = 'science';
-      } else if (category == 'Semua') {
-        apiCategory = null;
-      } else {
-        apiCategory = category.toLowerCase();
-      }
+      } else if (category == 'Bisnis') apiCategory = 'business';
+      else if (category == 'Olahraga') apiCategory = 'sports';
+      else if (category == 'Pendidikan') apiCategory = 'science'; // News API menggunakan science untuk sains/pendidikan
+      else if (category == 'Semua') apiCategory = null; // Jika Semua, tidak perlu kirim filter kategori
+      else apiCategory = category.toLowerCase(); // Jaga-jaga jika ada input teks lain
     }
 
     final uri = Uri.https('newsapi.org', '/v2/top-headlines', {
       'country': 'us',
       'pageSize': '20',
-      if (apiCategory != null) 'category': apiCategory,
+      'category': ?apiCategory, // Menggunakan apiCategory yang sudah diterjemahkan
       if (query != null && query.isNotEmpty) 'q': query,
     });
 

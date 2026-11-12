@@ -13,19 +13,23 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CircularProgressIndicator(
-            color: AppTheme.primary,
-          ),
-          const SizedBox(height: AppTheme.spacingM),
-          Text(
-            message,
-            style: AppTheme.bodyStyle,
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingL),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(
+              color: AppTheme.secondary,
+              strokeWidth: AppTheme.progressBarHeight,
+            ),
+            const SizedBox(height: AppTheme.spacingM),
+            Text(
+              message,
+              style: AppTheme.bodyStyle,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -51,10 +55,20 @@ class ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              color: AppTheme.error,
-              size: AppTheme.spacingXxl,
+            Container(
+              width: AppTheme.spacingXxl + AppTheme.spacingL,
+              height: AppTheme.spacingXxl + AppTheme.spacingL,
+              decoration: const BoxDecoration(
+                color: AppTheme.errorContainer,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  color: AppTheme.error,
+                  size: AppTheme.iconSizeXl,
+                ),
+              ),
             ),
             const SizedBox(height: AppTheme.spacingM),
             const Text(
@@ -71,7 +85,10 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingL),
             ElevatedButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: AppTheme.iconSizeM,
+              ),
               label: const Text('Coba Lagi'),
             ),
           ],
@@ -82,16 +99,21 @@ class ErrorView extends StatelessWidget {
 }
 
 /// Tampilan saat respons berhasil tetapi data tidak ditemukan (Empty State).
+/// Mengikuti gaya Empty State pada desain Stitch "Berita Tersimpan - Nusantara Post".
 class EmptyView extends StatelessWidget {
   final String title;
   final String message;
   final VoidCallback? onRetry;
+  final IconData icon;
+  final String? actionLabel;
 
   const EmptyView({
     super.key,
     this.title = 'Belum Ada Berita',
     this.message = 'Tidak ada artikel berita yang tersedia saat ini.',
     this.onRetry,
+    this.icon = Icons.bookmark_border_rounded,
+    this.actionLabel,
   });
 
   @override
@@ -102,10 +124,20 @@ class EmptyView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.article_outlined,
-              color: AppTheme.textSecondary,
-              size: AppTheme.spacingXxl,
+            Container(
+              width: AppTheme.spacingXxl + AppTheme.spacingL,
+              height: AppTheme.spacingXxl + AppTheme.spacingL,
+              decoration: const BoxDecoration(
+                color: AppTheme.surfaceContainerHigh,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: AppTheme.outline,
+                  size: AppTheme.iconSizeXl,
+                ),
+              ),
             ),
             const SizedBox(height: AppTheme.spacingM),
             Text(
@@ -121,10 +153,13 @@ class EmptyView extends StatelessWidget {
             ),
             if (onRetry != null) ...[
               const SizedBox(height: AppTheme.spacingL),
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Muat Ulang'),
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  size: AppTheme.iconSizeM,
+                ),
+                label: Text(actionLabel ?? 'Muat Ulang'),
               ),
             ],
           ],
